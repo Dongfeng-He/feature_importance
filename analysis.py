@@ -6,6 +6,8 @@ from feature_selection import *
 import xgboost
 import random
 from sklearn.metrics import precision_recall_fscore_support, roc_auc_score
+import os
+import time
 
 
 if __name__ == "__main__":
@@ -132,7 +134,7 @@ if __name__ == "__main__":
     sample_list, overall_bucket_name_dict = feature_concat(feature_comb_list)
     overall_bucket_name_list = [overall_bucket_name_dict[i] for i in range(len(overall_bucket_name_dict))]
     # 训练 XGBoost
-    sample_rate = 0.005
+    sample_rate = 0.02
     split_rate = 0.8
     sample_num = int(len(sample_list) * sample_rate)
     sample_list = sample_list[: sample_num]
@@ -146,8 +148,16 @@ if __name__ == "__main__":
     y_train = np.array(label_list[:train_num])
     x_valid = np.array(sample_list[train_num:])
     y_valid = np.array(label_list[train_num:])
+    """
+    if os.path.exists("/root/feature_importance"):
+        classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500, tree_method='gpu_hist')
+    else:
+        classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500)
+    """
     classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500)
+    start_time = time.time()
     classifier.fit(x_train, y_train)
+    print("耗时：%d min" % int((time.time() - start_time) / 60))
     # x_valid = xgboost.DMatrix(x_valid)
     y_pred = classifier.predict(x_valid)
     result = precision_recall_fscore_support(y_valid, y_pred)
