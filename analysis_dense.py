@@ -139,7 +139,7 @@ if __name__ == "__main__":
 
     if True:
         # 特征交叉, 三阶
-        for combs in itertools.combinations(dense_feature_comb_list, 3):
+        for combs in itertools.combinations(feature_comb_list, 3):
             cross_feature_list, cross_feature_name_dict = feature_cross_3(combs[0], combs[1], combs[2], one_hot=False)
             new_dict = convert_dict(cross_feature_name_dict)
             feature_comb = [cross_feature_list, new_dict]
