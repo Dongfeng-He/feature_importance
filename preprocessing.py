@@ -253,6 +253,24 @@ def feature_concat(feature_comb_list):
     return sample_list, overall_bucket_name_dict
 
 
+def feature_concat_dense(feature_comb_list):
+    overall_bucket_name_dict = {}
+    add_up_list = []
+    for feature_comb in feature_comb_list:
+        add_up = len(overall_bucket_name_dict)
+        add_up_list.append(add_up)
+        bucket_name_dict = feature_comb[1]
+        for index, bucket_name in bucket_name_dict.items():
+            overall_bucket_name_dict[index + add_up] = bucket_name
+    sample_list = []
+    for i in range(len(feature_comb_list[0][0])):
+        sample = []
+        for j in range(len(feature_comb_list)):
+            sample.append(feature_comb_list[j][0][i])
+        sample_list.append(sample)
+    return sample_list, overall_bucket_name_dict
+
+
 def feature_concat_sparse(feature_comb_list, train_num):
     overall_bucket_name_dict = {}
     add_up_list = []
