@@ -130,12 +130,15 @@ if __name__ == "__main__":
         feature_chi = chi2(data_array, label_list)[0]
 
     # 特征拼接
-    if True:
+    if False:
         feature_comb_list = [feature_comb_0, feature_comb_1, feature_comb_2, feature_comb_3, feature_comb_4,
                              feature_comb_5, feature_comb_6, feature_comb_7, feature_comb_8]
-    else:
+    if False:
         feature_comb_list = [feature_comb_0, feature_comb_1, feature_comb_2, feature_comb_3,
                              feature_comb_5, feature_comb_6, feature_comb_7, feature_comb_8]
+    if True:
+        feature_comb_list = [feature_comb_0, feature_comb_1, feature_comb_2, feature_comb_3, feature_comb_4,
+                             feature_comb_5, feature_comb_6]
     if True:
         # 特征交叉
         feature_cate_num = len(feature_comb_list)
@@ -153,7 +156,7 @@ if __name__ == "__main__":
     y_valid = np.array(label_list[train_num:])
     y_train = np.array(label_list[:train_num])
     best_auc = 0
-    while True:
+    while False:
         learning_rate = [0.01, 0.05, 0.07, 0.1, 0.2][random.randint(0, 4)]
         n_estimators = random.randint(50, 1000)
         max_depth = random.randint(3, 10)
@@ -191,6 +194,28 @@ if __name__ == "__main__":
         # print(classifier.feature_importances_)
     # xgboost.plot_importance(classifier)
     # plt.show()
+    if True:
+        [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha, reg_lambda] = [0.1, 743, 10, 8, 0.5887866006575845, 0.6, 0.6, 1, 2]
+        if os.path.exists("/root/feature_importance"):
+            classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
+                                               n_estimators=n_estimators, max_depth=max_depth,
+                                               min_child_weight=min_child_weight, gamma=gamma, subsample=subsample,
+                                               colsample_bytree=colsample_bytree, reg_alpha=reg_alpha,
+                                               reg_lambda=reg_lambda, tree_method='gpu_hist')
+        else:
+            classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
+                                               n_estimators=n_estimators, max_depth=max_depth,
+                                               min_child_weight=min_child_weight, gamma=gamma, subsample=subsample,
+                                               colsample_bytree=colsample_bytree, reg_alpha=reg_alpha,
+                                               reg_lambda=reg_lambda)
+        start_time = time.time()
+        classifier.fit(train_csr, y_train)
+        # print("耗时：%d min" % int((time.time() - start_time) / 60))
+        # x_valid = xgboost.DMatrix(x_valid)
+        y_pred = classifier.predict(valid_csr)
+        result = precision_recall_fscore_support(y_valid, y_pred)
+        auc_score = roc_auc_score(y_valid, y_pred)
+        print("准确率:{:.2%}, 召回率:{:.2%}, F1_score:{:.2%}, AUC_score:{:.2%}".format(float(result[0][1]), float(result[1][1]), float(result[2][1]), auc_score))
     feature_importance_pairs = list(zip(overall_bucket_name_list, classifier.feature_importances_))
     sorted_feature_importance = sorted(feature_importance_pairs, key=lambda x: x[1], reverse=True)
     for i in range(len(sorted_feature_importance)):
