@@ -127,7 +127,7 @@ if __name__ == "__main__":
                                dense_feature_comb_4, dense_feature_comb_5, dense_feature_comb_6, dense_feature_comb_7,
                                dense_feature_comb_8]
 
-    if True:
+    if False:
         # 特征交叉, 二阶
         feature_cate_num = len(feature_comb_list)
         for i in range(0, feature_cate_num - 1):
@@ -137,7 +137,7 @@ if __name__ == "__main__":
                 feature_comb = [cross_feature_list, new_dict]
                 dense_feature_comb_list.append(feature_comb)
 
-    if True:
+    if False:
         # 特征交叉, 三阶
         for combs in itertools.combinations(feature_comb_list, 3):
             cross_feature_list, cross_feature_name_dict = feature_cross_3(combs[0], combs[1], combs[2], one_hot=False)
@@ -164,15 +164,15 @@ if __name__ == "__main__":
     x_train = np.array(sample_list[:train_num])
     y_train = np.array(label_list[:train_num])
 
-    if True:
+    if False:
         # 一阶: [0.1, 292, 3, 10, 0.49370939396193736, 0.7, 0.6, 1, 3]  AUC_score:75.41%
         # 二阶: [0.01, 95, 3, 11, 0.5650788634276807, 0.7, 0.9, 0.1, 0.1] AUC_score:76.12%
-        # 三阶:
+        # 三阶: [0.05, 158, 4, 7, 0.5567969076614763, 0.8, 0.9, 0.05, 2]  AUC_score:75.40%
         grid_search(x_train, y_train, x_valid, y_valid)
 
     if True:
         [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha,
-         reg_lambda] = [0.1, 743, 10, 8, 0.5887866006575845, 0.6, 0.6, 1, 2]
+         reg_lambda] = [0.1, 292, 3, 10, 0.49370939396193736, 0.7, 0.6, 1, 3]
         if os.path.exists("/root/feature_importance"):
             classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
                                                n_estimators=n_estimators, max_depth=max_depth,
