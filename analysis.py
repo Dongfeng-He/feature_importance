@@ -144,7 +144,7 @@ if __name__ == "__main__":
     overall_bucket_name_list = [overall_bucket_name_dict[i] for i in range(len(overall_bucket_name_dict))]
     # 训练 XGBoost
     sample_rate = 1
-    split_rate = 0.8
+    split_rate = 0.9
     sample_num = int(len(sample_list) * sample_rate)
     sample_list = sample_list[: sample_num]
     label_list = label_list[: sample_num]
