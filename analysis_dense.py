@@ -166,13 +166,13 @@ if __name__ == "__main__":
 
     if False:
         # 一阶: [0.1, 292, 3, 10, 0.49370939396193736, 0.7, 0.6, 1, 3]  AUC_score:75.41%
-        # 二阶: [0.01, 95, 3, 11, 0.5650788634276807, 0.7, 0.9, 0.1, 0.1] AUC_score:76.12%
+        # 二阶: [0.05, 158, 4, 7, 0.5567969076614763, 0.8, 0.9, 0.05, 2] AUC_score:75.45%
         # 三阶: [0.05, 158, 4, 7, 0.5567969076614763, 0.8, 0.9, 0.05, 2]  AUC_score:75.40%
         grid_search(x_train, y_train, x_valid, y_valid)
 
     if True:
         [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha,
-         reg_lambda] = [0.1, 292, 3, 10, 0.49370939396193736, 0.7, 0.6, 1, 3]
+         reg_lambda] = [0.05, 158, 4, 7, 0.5567969076614763, 0.8, 0.9, 0.05, 2]
         if os.path.exists("/root/feature_importance"):
             classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
                                                n_estimators=n_estimators, max_depth=max_depth,
