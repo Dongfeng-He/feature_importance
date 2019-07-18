@@ -63,25 +63,25 @@ if __name__ == "__main__":
     share_channel_cnt_buckets = [1, 2, 3]
 
     # 离散化
-    program_cnt_bucket_name = create_bucket_name_dict(program_cnt_buckets, "节目数")
+    program_cnt_bucket_name = create_bucket_name_dict(program_cnt_buckets, "收听节目数")
     program_cnt_features = feature_discretization(program_cnt, program_cnt_buckets)
 
-    chan_cnt_bucket_name = create_bucket_name_dict(chan_cnt_buckets, "专辑数")
+    chan_cnt_bucket_name = create_bucket_name_dict(chan_cnt_buckets, "收听专辑数")
     chan_cnt_features = feature_discretization(chan_cnt, chan_cnt_buckets)
 
-    category_cnt_bucket_name = create_bucket_name_dict(category_cnt_buckets, "类别数")
+    category_cnt_bucket_name = create_bucket_name_dict(category_cnt_buckets, "收听分类数")
     category_cnt_features = feature_discretization(category_cnt, category_cnt_buckets)
 
-    sum_duration_bucket_name = create_bucket_name_dict(sum_duration_buckets, "时长")
+    sum_duration_bucket_name = create_bucket_name_dict(sum_duration_buckets, "累计时长")
     sum_duration_features = feature_discretization(sum_duration, sum_duration_buckets)
 
-    sum_play_day_bucket_name = create_bucket_name_dict(sum_play_day_buckets, "天数")
+    sum_play_day_bucket_name = create_bucket_name_dict(sum_play_day_buckets, "累计天数")
     sum_play_day_features = feature_discretization(sum_play_day, sum_play_day_buckets)
 
-    collect_channel_cnt_bucket_name = create_bucket_name_dict(collect_channel_cnt_buckets, "收藏专辑")
+    collect_channel_cnt_bucket_name = create_bucket_name_dict(collect_channel_cnt_buckets, "收藏专辑数")
     collect_channel_cnt_features = feature_discretization(collect_channel_cnt, collect_channel_cnt_buckets)
 
-    collect_category_cnt_bucket_name = create_bucket_name_dict(collect_category_cnt_buckets, "收藏类别")
+    collect_category_cnt_bucket_name = create_bucket_name_dict(collect_category_cnt_buckets, "收藏分类数")
     collect_category_cnt_features = feature_discretization(collect_category_cnt, collect_category_cnt_buckets)
 
     chat_cnt_bucket_name = create_bucket_name_dict(chat_cnt_buckets, "评论数")
