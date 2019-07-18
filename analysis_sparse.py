@@ -176,7 +176,6 @@ if __name__ == "__main__":
                                                colsample_bytree=colsample_bytree, reg_alpha=reg_alpha,
                                                reg_lambda=reg_lambda)
         params = [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha, reg_lambda]
-        print(params)
         # classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500)
         start_time = time.time()
         classifier.fit(train_csr, y_train)
@@ -188,6 +187,7 @@ if __name__ == "__main__":
         if auc_score > best_auc:
             best_auc = auc_score
             print("准确率:{:.2%}, 召回率:{:.2%}, F1_score:{:.2%}, AUC_score:{:.2%}".format(float(result[0][1]), float(result[1][1]), float(result[2][1]), auc_score))
+            print(params)
         # print(classifier.feature_importances_)
     # xgboost.plot_importance(classifier)
     # plt.show()
