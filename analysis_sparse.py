@@ -132,15 +132,15 @@ if __name__ == "__main__":
     # 特征拼接
     feature_comb_list = [feature_comb_0, feature_comb_1, feature_comb_2, feature_comb_3, feature_comb_4,
                          feature_comb_5, feature_comb_6, feature_comb_7, feature_comb_8]
-    """
-    # 特征交叉
-    feature_cate_num = len(feature_comb_list)
-    for i in range(0, feature_cate_num - 1):
-        for j in range(i + 1, feature_cate_num):
-            cross_feature_list, cross_feature_name_dict = feature_cross_2(feature_comb_list[i], feature_comb_list[j], one_hot=False)
-            feature_comb = [cross_feature_list, cross_feature_name_dict]
-            feature_comb_list.append(feature_comb)
-    """
+    if True:
+        # 特征交叉
+        feature_cate_num = len(feature_comb_list)
+        for i in range(0, feature_cate_num - 1):
+            for j in range(i + 1, feature_cate_num):
+                cross_feature_list, cross_feature_name_dict = feature_cross_2(feature_comb_list[i], feature_comb_list[j], one_hot=False)
+                feature_comb = [cross_feature_list, cross_feature_name_dict]
+                feature_comb_list.append(feature_comb)
+
     # 训练 XGBoost
     split_rate = 0.9
     train_num = int(len(label_list) * split_rate)
