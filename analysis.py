@@ -156,8 +156,7 @@ if __name__ == "__main__":
     random.shuffle(label_list)
     x_valid = np.array(sample_list[train_num:])
     y_valid = np.array(label_list[train_num:])
-    # x_train = np.array(sample_list[:train_num])
-    x_train = csr_matrix(sample_list[:train_num])
+    x_train = np.array(sample_list[:train_num])
     y_train = np.array(label_list[:train_num])
     if os.path.exists("/root/feature_importance"):
         classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500, tree_method='gpu_hist')

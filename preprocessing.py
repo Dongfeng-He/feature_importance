@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import math
+from scipy.sparse import csr_matrix
 
 
 # 定义一个卡方分箱（可设置参数置信度水平与箱的个数）停止条件为大于置信水平且小于bin的数目
@@ -250,6 +251,38 @@ def feature_concat(feature_comb_list):
             vec[index] = 1
         sample_list.append(vec)
     return sample_list, overall_bucket_name_dict
+
+
+def feature_concat_sparse(feature_comb_list, train_num):
+    overall_bucket_name_dict = {}
+    add_up_list = []
+    for feature_comb in feature_comb_list:
+        add_up = len(overall_bucket_name_dict)
+        add_up_list.append(add_up)
+        bucket_name_dict = feature_comb[1]
+        for index, bucket_name in bucket_name_dict.items():
+            overall_bucket_name_dict[index + add_up] = bucket_name
+    dim = len(overall_bucket_name_dict)
+    train_row = []
+    train_col = []
+    train_data = []
+    valid_row = []
+    valid_col = []
+    valid_data = []
+    for i in range(len(feature_comb_list[0][0])):
+        for j in range(len(feature_comb_list)):
+            index = feature_comb_list[j][0][i] + add_up_list[j]
+            if i < train_num:
+                train_row.append(i)
+                train_col.append(index)
+                train_data.append(1)
+            else:
+                valid_row.append(i - train_num)
+                valid_col.append(index)
+                valid_data.append(1)
+    train_csr = csr_matrix((np.array(train_data), (np.array(train_row), np.array(train_col))), shape=(train_num, dim))
+    valid_csr = csr_matrix((np.array(valid_data), (np.array(valid_row), np.array(valid_col))), shape=(len(feature_comb_list[0][0]) - train_num, dim))
+    return train_csr, valid_csr, overall_bucket_name_dict
 
 
 if __name__ == "__main__":
