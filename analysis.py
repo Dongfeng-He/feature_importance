@@ -100,37 +100,46 @@ if __name__ == "__main__":
     feature_comb_8 = [share_channel_cnt_features, share_channel_cnt_bucket_name]
 
     # 留存率曲线
-    """
-    draw_retention_rate_2d(feature_comb_0, label_list)
-    draw_retention_rate_2d(feature_comb_1, label_list)
-    draw_retention_rate_2d(feature_comb_2, label_list)
-    draw_retention_rate_2d(feature_comb_3, label_list)
-    draw_retention_rate_2d(feature_comb_4, label_list)
-    draw_retention_rate_2d(feature_comb_5, label_list)
-    draw_retention_rate_2d(feature_comb_6, label_list)
-    draw_retention_rate_2d(feature_comb_7, label_list)
-    draw_retention_rate_2d(feature_comb_8, label_list)
-    """
-    # draw_retention_rate_3d(feature_comb_0, feature_comb_1, label_list)
-    # draw_retention_rate_3d(feature_comb_5, feature_comb_7, label_list)
+    if False:
+        draw_retention_rate_2d(feature_comb_0, label_list)
+        draw_retention_rate_2d(feature_comb_1, label_list)
+        draw_retention_rate_2d(feature_comb_2, label_list)
+        draw_retention_rate_2d(feature_comb_3, label_list)
+        draw_retention_rate_2d(feature_comb_4, label_list)
+        draw_retention_rate_2d(feature_comb_5, label_list)
+        draw_retention_rate_2d(feature_comb_6, label_list)
+        draw_retention_rate_2d(feature_comb_7, label_list)
+        draw_retention_rate_2d(feature_comb_8, label_list)
+        draw_retention_rate_3d(feature_comb_0, feature_comb_1, label_list)
+        draw_retention_rate_3d(feature_comb_5, feature_comb_7, label_list)
 
     # 单变量分析
-    data = [program_cnt_features,
-            chan_cnt_features,
-            category_cnt_features,
-            sum_duration_features,
-            sum_play_day_features,
-            collect_channel_cnt_features,
-            collect_category_cnt_features,
-            chat_cnt_features,
-            share_channel_cnt_features]
-    data_array = np.array(data).transpose()
-    feature_pearsonr = multivariate_pearsonr(data_array, label_list)[0]
-    feature_chi = chi2(data_array, label_list)[0]
+    if False:
+        data = [program_cnt_features,
+                chan_cnt_features,
+                category_cnt_features,
+                sum_duration_features,
+                sum_play_day_features,
+                collect_channel_cnt_features,
+                collect_category_cnt_features,
+                chat_cnt_features,
+                share_channel_cnt_features]
+        data_array = np.array(data).transpose()
+        feature_pearsonr = multivariate_pearsonr(data_array, label_list)[0]
+        feature_chi = chi2(data_array, label_list)[0]
 
     # 特征拼接
     feature_comb_list = [feature_comb_0, feature_comb_1, feature_comb_2, feature_comb_3, feature_comb_4,
                          feature_comb_5, feature_comb_6, feature_comb_7, feature_comb_8]
+
+    # 特征交叉
+    feature_cate_num = len(feature_comb_list)
+    for i in range(0, feature_cate_num - 1):
+        for j in range(i + 1, feature_cate_num):
+            cross_feature_list, cross_feature_name_dict = feature_cross_2(feature_comb_list[i], feature_comb_list[j], one_hot=False)
+            feature_comb = [cross_feature_list, cross_feature_name_dict]
+            feature_comb_list.append(feature_comb)
+
     sample_list, overall_bucket_name_dict = feature_concat(feature_comb_list)
     overall_bucket_name_list = [overall_bucket_name_dict[i] for i in range(len(overall_bucket_name_dict))]
     # 训练 XGBoost
