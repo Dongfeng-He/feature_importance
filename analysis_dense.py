@@ -9,6 +9,7 @@ from sklearn.metrics import precision_recall_fscore_support, roc_auc_score
 import os
 from scipy.sparse import csr_matrix
 import time
+import itertools
 import re
 
 
@@ -126,8 +127,8 @@ if __name__ == "__main__":
                                dense_feature_comb_4, dense_feature_comb_5, dense_feature_comb_6, dense_feature_comb_7,
                                dense_feature_comb_8]
 
-    if False:
-        # 特征交叉
+    if True:
+        # 特征交叉, 二阶
         feature_cate_num = len(feature_comb_list)
         for i in range(0, feature_cate_num - 1):
             for j in range(i + 1, feature_cate_num):
@@ -135,6 +136,14 @@ if __name__ == "__main__":
                 new_dict = convert_dict(cross_feature_name_dict)
                 feature_comb = [cross_feature_list, new_dict]
                 dense_feature_comb_list.append(feature_comb)
+
+    if False:
+        # 特征交叉, 三阶
+        for combs in itertools.combinations(dense_feature_comb_list, 3):
+            cross_feature_list, cross_feature_name_dict = feature_cross_3(combs[0], combs[1], combs[2], one_hot=False)
+            new_dict = convert_dict(cross_feature_name_dict)
+            feature_comb = [cross_feature_list, new_dict]
+            dense_feature_comb_list.append(feature_comb)
 
     # 训练 XGBoost
     sample_list, overall_bucket_name_dict = feature_concat_dense(dense_feature_comb_list)
@@ -156,12 +165,26 @@ if __name__ == "__main__":
     y_train = np.array(label_list[:train_num])
 
     if True:
+        # 一阶: [0.1, 292, 3, 10, 0.49370939396193736, 0.7, 0.6, 1, 3]  AUC_score:75.41%
+        # 二阶:
+        # 三阶:
         grid_search(x_train, y_train, x_valid, y_valid)
 
-    if os.path.exists("/root/feature_importance"):
-        classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500, tree_method='gpu_hist')
-    else:
-        classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500)
+    if True:
+        [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha,
+         reg_lambda] = [0.1, 743, 10, 8, 0.5887866006575845, 0.6, 0.6, 1, 2]
+        if os.path.exists("/root/feature_importance"):
+            classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
+                                               n_estimators=n_estimators, max_depth=max_depth,
+                                               min_child_weight=min_child_weight, gamma=gamma, subsample=subsample,
+                                               colsample_bytree=colsample_bytree, reg_alpha=reg_alpha,
+                                               reg_lambda=reg_lambda, tree_method='gpu_hist')
+        else:
+            classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
+                                               n_estimators=n_estimators, max_depth=max_depth,
+                                               min_child_weight=min_child_weight, gamma=gamma, subsample=subsample,
+                                               colsample_bytree=colsample_bytree, reg_alpha=reg_alpha,
+                                               reg_lambda=reg_lambda)
     # classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500)
     start_time = time.time()
     classifier.fit(x_train, y_train)
@@ -170,10 +193,7 @@ if __name__ == "__main__":
     y_pred = classifier.predict(x_valid)
     result = precision_recall_fscore_support(y_valid, y_pred)
     auc_score = roc_auc_score(y_valid, y_pred)
-    print("XGBoost分类器：「准确率:{:.2%}」 「召回率:{:.2%}」 「F1_score:{:.2%}」 「AUC_score:{:.2%}」".format(float(result[0][1]),
-                                                                                             float(result[1][1]),
-                                                                                             float(result[2][1]),
-                                                                                             auc_score))
+    print("XGBoost分类器：「准确率:{:.2%}」 「召回率:{:.2%}」 「F1_score:{:.2%}」 「AUC_score:{:.2%}」".format(float(result[0][1]), float(result[1][1]), float(result[2][1]), auc_score))
     # print(classifier.feature_importances_)
     # xgboost.plot_importance(classifier)
     # plt.show()
