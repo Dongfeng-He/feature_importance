@@ -152,6 +152,7 @@ if __name__ == "__main__":
     overall_bucket_name_list = [overall_bucket_name_dict[i] for i in range(len(overall_bucket_name_dict))]
     y_valid = np.array(label_list[train_num:])
     y_train = np.array(label_list[:train_num])
+    best_auc = 0
     while True:
         learning_rate = [0.01, 0.05, 0.07, 0.1, 0.2][random.randint(0, 4)]
         n_estimators = random.randint(50, 1000)
@@ -179,12 +180,14 @@ if __name__ == "__main__":
         # classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500)
         start_time = time.time()
         classifier.fit(train_csr, y_train)
-        print("耗时：%d min" % int((time.time() - start_time) / 60))
+        # print("耗时：%d min" % int((time.time() - start_time) / 60))
         # x_valid = xgboost.DMatrix(x_valid)
         y_pred = classifier.predict(valid_csr)
         result = precision_recall_fscore_support(y_valid, y_pred)
         auc_score = roc_auc_score(y_valid, y_pred)
-        print("XGBoost分类器：「准确率:{:.2%}」 「召回率:{:.2%}」 「F1_score:{:.2%}」 「AUC_score:{:.2%}」".format(float(result[0][1]), float(result[1][1]), float(result[2][1]), auc_score))
+        if auc_score > best_auc:
+            best_auc = auc_score
+            print("XGBoost分类器：「准确率:{:.2%}」 「召回率:{:.2%}」 「F1_score:{:.2%}」 「AUC_score:{:.2%}」".format(float(result[0][1]), float(result[1][1]), float(result[2][1]), auc_score))
         # print(classifier.feature_importances_)
     # xgboost.plot_importance(classifier)
     # plt.show()
