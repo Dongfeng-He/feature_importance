@@ -130,13 +130,13 @@ if __name__ == "__main__":
         feature_chi = chi2(data_array, label_list)[0]
 
     # 特征拼接
-    if False:
+    if True:
         feature_comb_list = [feature_comb_0, feature_comb_1, feature_comb_2, feature_comb_3, feature_comb_4,
                              feature_comb_5, feature_comb_6, feature_comb_7, feature_comb_8]
     if False:
         feature_comb_list = [feature_comb_0, feature_comb_1, feature_comb_2, feature_comb_3,
                              feature_comb_5, feature_comb_6, feature_comb_7, feature_comb_8]
-    if True:
+    if False:
         feature_comb_list = [feature_comb_0, feature_comb_1, feature_comb_2, feature_comb_3, feature_comb_4,
                              feature_comb_5, feature_comb_6]
     if False:
