@@ -136,7 +136,7 @@ if __name__ == "__main__":
     else:
         feature_comb_list = [feature_comb_0, feature_comb_1, feature_comb_2, feature_comb_3,
                              feature_comb_5, feature_comb_6, feature_comb_7, feature_comb_8]
-    if False:
+    if True:
         # 特征交叉
         feature_cate_num = len(feature_comb_list)
         for i in range(0, feature_cate_num - 1):
