@@ -9,6 +9,9 @@ from sklearn.ensemble import GradientBoostingClassifier
 from mpl_toolkits.mplot3d import Axes3D # 虽然不直接调用，但不能删除
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from matplotlib import cm
+import xgboost
+import random
+from sklearn.metrics import precision_recall_fscore_support, roc_auc_score
 
 
 def draw_hist(heights, interval_num, xlabel="", ylabel="", title=""):
@@ -163,6 +166,45 @@ class LR(LogisticRegression):
                     mean = coef / len(idx)
                     self.coef_[i][idx] = mean
         return self
+
+
+def grid_search(x_train, y_train, x_valid, y_valid):
+    best_auc = 0
+    while False:
+        learning_rate = [0.01, 0.05, 0.07, 0.1, 0.2][random.randint(0, 4)]
+        n_estimators = random.randint(50, 1000)
+        max_depth = random.randint(3, 10)
+        min_child_weight = random.randint(1, 12)
+        gamma = random.uniform(0.1, 0.6)
+        subsample = [0.6, 0.7, 0.8, 0.9][random.randint(0, 3)]
+        colsample_bytree = [0.6, 0.7, 0.8, 0.9][random.randint(0, 3)]
+        reg_alpha = [0.05, 0.1, 1, 2, 3][random.randint(0, 4)]
+        reg_lambda = [0.05, 0.1, 1, 2, 3][random.randint(0, 4)]
+        if os.path.exists("/root/feature_importance"):
+            classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
+                                               n_estimators=n_estimators, max_depth=max_depth,
+                                               min_child_weight=min_child_weight, gamma=gamma, subsample=subsample,
+                                               colsample_bytree=colsample_bytree, reg_alpha=reg_alpha,
+                                               reg_lambda=reg_lambda, tree_method='gpu_hist')
+        else:
+            classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
+                                               n_estimators=n_estimators, max_depth=max_depth,
+                                               min_child_weight=min_child_weight, gamma=gamma, subsample=subsample,
+                                               colsample_bytree=colsample_bytree, reg_alpha=reg_alpha,
+                                               reg_lambda=reg_lambda)
+        params = [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha, reg_lambda]
+        # classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500)
+        classifier.fit(x_train, y_train)
+        # print("耗时：%d min" % int((time.time() - start_time) / 60))
+        # x_valid = xgboost.DMatrix(x_valid)
+        y_pred = classifier.predict(x_valid)
+        result = precision_recall_fscore_support(y_valid, y_pred)
+        auc_score = roc_auc_score(y_valid, y_pred)
+        if auc_score > best_auc:
+            best_auc = auc_score
+            print("准确率:{:.2%}, 召回率:{:.2%}, F1_score:{:.2%}, AUC_score:{:.2%}".format(float(result[0][1]), float(result[1][1]), float(result[2][1]), auc_score))
+            print(params)
+
 
 
 if __name__ == "__main__":
