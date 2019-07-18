@@ -167,6 +167,8 @@ if __name__ == "__main__":
     feature_importance_pairs = list(zip(overall_bucket_name_list, classifier.feature_importances_))
     sorted_feature_importance = sorted(feature_importance_pairs, key=lambda x: x[1], reverse=True)
     for i in range(len(sorted_feature_importance)):
+        if "[0, " in sorted_feature_importance[i][0]:
+            continue
         print("%d\t%s\t\t\t%f" % (i, sorted_feature_importance[i][0], sorted_feature_importance[i][1]))
     print()
 
