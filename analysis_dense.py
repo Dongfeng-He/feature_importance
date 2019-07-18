@@ -137,7 +137,7 @@ if __name__ == "__main__":
                 feature_comb = [cross_feature_list, new_dict]
                 dense_feature_comb_list.append(feature_comb)
 
-    if False:
+    if True:
         # 特征交叉, 三阶
         for combs in itertools.combinations(dense_feature_comb_list, 3):
             cross_feature_list, cross_feature_name_dict = feature_cross_3(combs[0], combs[1], combs[2], one_hot=False)
@@ -166,7 +166,7 @@ if __name__ == "__main__":
 
     if True:
         # 一阶: [0.1, 292, 3, 10, 0.49370939396193736, 0.7, 0.6, 1, 3]  AUC_score:75.41%
-        # 二阶:
+        # 二阶: [0.01, 95, 3, 11, 0.5650788634276807, 0.7, 0.9, 0.1, 0.1] AUC_score:76.12%
         # 三阶:
         grid_search(x_train, y_train, x_valid, y_valid)
 
