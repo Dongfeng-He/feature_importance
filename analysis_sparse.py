@@ -152,7 +152,7 @@ if __name__ == "__main__":
     overall_bucket_name_list = [overall_bucket_name_dict[i] for i in range(len(overall_bucket_name_dict))]
     y_valid = np.array(label_list[train_num:])
     y_train = np.array(label_list[:train_num])
-    while False:
+    while True:
         learning_rate = [0.01, 0.05, 0.07, 0.1, 0.2][random.randint(0, 4)]
         n_estimators = random.randint(50, 1000)
         max_depth = random.randint(3, 10)
