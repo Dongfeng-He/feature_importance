@@ -155,7 +155,7 @@ if __name__ == "__main__":
     random.shuffle(label_list)
     x_valid = np.array(sample_list[train_num:])
     y_valid = np.array(label_list[train_num:])
-    sample_list_train = np.array(sample_list[:train_num])
+    sample_list = np.array(sample_list[:train_num])
     y_train = np.array(label_list[:train_num])
     if os.path.exists("/root/feature_importance"):
         classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500, tree_method='gpu_hist')
@@ -163,7 +163,7 @@ if __name__ == "__main__":
         classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500)
     # classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500)
     start_time = time.time()
-    classifier.fit(sample_list_train, y_train)
+    classifier.fit(sample_list, y_train)
     print("耗时：%d min" % int((time.time() - start_time) / 60))
     # x_valid = xgboost.DMatrix(x_valid)
     y_pred = classifier.predict(x_valid)
