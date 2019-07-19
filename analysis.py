@@ -115,7 +115,7 @@ if __name__ == "__main__":
         draw_retention_rate_3d(feature_comb_5, feature_comb_7, label_list)
 
     # 单变量分析
-    if False:
+    if True:
         data = [program_cnt_features,
                 chan_cnt_features,
                 category_cnt_features,
