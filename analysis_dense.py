@@ -127,7 +127,7 @@ if __name__ == "__main__":
                                dense_feature_comb_4, dense_feature_comb_5, dense_feature_comb_6, dense_feature_comb_7,
                                dense_feature_comb_8]
 
-    if True:
+    if False:
         # 特征交叉, 二阶
         feature_cate_num = len(feature_comb_list)
         for i in range(0, feature_cate_num - 1):
@@ -137,7 +137,7 @@ if __name__ == "__main__":
                 feature_comb = [cross_feature_list, new_dict]
                 dense_feature_comb_list.append(feature_comb)
 
-    if True:
+    if False:
         # 特征交叉, 三阶
         for combs in itertools.combinations(feature_comb_list, 3):
             cross_feature_list, cross_feature_name_dict = feature_cross_3(combs[0], combs[1], combs[2], one_hot=False)
@@ -172,7 +172,7 @@ if __name__ == "__main__":
 
     if True:
         [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha,
-         reg_lambda] = [0.05, 437, 6, 1, 0.28736142018256616, 0.9, 0.9, 3, 2]
+         reg_lambda] = [0.1, 292, 3, 10, 0.49370939396193736, 0.7, 0.6, 1, 3]
         if os.path.exists("/root/feature_importance"):
             classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
                                                n_estimators=n_estimators, max_depth=max_depth,
@@ -200,5 +200,5 @@ if __name__ == "__main__":
     feature_importance_pairs = list(zip(overall_bucket_name_list, classifier.feature_importances_))
     sorted_feature_importance = sorted(feature_importance_pairs, key=lambda x: x[1], reverse=True)
     for i in range(len(sorted_feature_importance)):
-        print("%d\t%s\t\t\t%f" % (i, sorted_feature_importance[i][0], sorted_feature_importance[i][1]))
+        print("%d\t%s\t%f" % (i, sorted_feature_importance[i][0], sorted_feature_importance[i][1]))
     print()

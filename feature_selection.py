@@ -12,6 +12,7 @@ from matplotlib import cm
 import xgboost
 import random
 import os
+import re
 from sklearn.metrics import precision_recall_fscore_support, roc_auc_score
 
 
@@ -26,10 +27,24 @@ def draw_hist(heights, interval_num, xlabel="", ylabel="", title=""):
     plt.show()
 
 
-def draw_line(x, y, name_list):
-    x, y = (list(t) for t in zip(*sorted(zip(x, y), reverse=False)))
-    plt.plot(x, y)
-    plt.xticks(x[::1], name_list[::1], rotation=45)
+def draw_line(x, y, y_proportion, name_list, title):
+    name_list = ["[%s)" % re.findall(r'[[](.*?)[)]', name)[0] for name in name_list]
+    x, y, y_proportion = (list(t) for t in zip(*sorted(zip(x, y, y_proportion), reverse=False)))
+    # plt.plot(x, y)
+    # plt.xticks(x[::1], name_list[::1], rotation=45)
+    # plt.show()
+    fig = plt.figure()
+    ax1 = fig.add_subplot(111)
+    ax1.plot(x, y, label=u'retention_rate')
+    plt.xticks(x[::1], name_list[::1], rotation=90)
+    ax1.legend(loc=1)
+    plt.legend(prop={'family': 'SimHei', 'size': 8}, loc="upper left")
+    ax2 = ax1.twinx()  # this is the important function
+    plt.bar(x, y_proportion, alpha=0.3, color='blue', label=u'proportion')
+    ax2.legend(loc=2)
+    ax2.set_ylim([0, 0.3])  # 设置y轴取值范围
+    plt.legend(prop={'family': 'SimHei', 'size': 8}, loc="upper right")
+    plt.title(title)
     plt.show()
 
 
@@ -73,7 +88,7 @@ def draw_3d_2(x, y, z):
     plt.show()
 
 
-def draw_retention_rate_2d(feature_comb, label_list):
+def draw_retention_rate_2d(feature_comb, label_list, title):
     feature_list, bucket_name_dict = feature_comb[0], feature_comb[1]
     feature_size = max(feature_list) + 1
     feature_retention_dict = {feature: [0, 0] for feature in range(feature_size)}
@@ -82,16 +97,19 @@ def draw_retention_rate_2d(feature_comb, label_list):
     feature_retention_rate_dict = {}
     x = []
     y = []
+    y_proportion = []
     name_list = []
     for feature in range(feature_size):
         positive_num = feature_retention_dict[feature][1]
         total_num = sum(feature_retention_dict[feature])
-        retention_rate = positive_num / total_num
+        retention_rate = positive_num / total_num if total_num > 0 else 0
+        proportion = total_num / len(feature_list)
         feature_retention_rate_dict[feature] = retention_rate
         x.append(feature)
         y.append(retention_rate)
+        y_proportion.append(proportion)
         name_list.append(bucket_name_dict[feature])
-    draw_line(x, y, name_list)
+    draw_line(x, y, y_proportion, name_list, title)
     print()
 
 
