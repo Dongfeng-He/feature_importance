@@ -127,8 +127,13 @@ if __name__ == "__main__":
                 share_channel_cnt_features]
         data_array = np.array(data).transpose()
         feature_pearsonr = multivariate_pearsonr(data_array, label_list)[0]
+        for i in feature_pearsonr.tolist():
+            print("%.3f\t" % i, end="")
+        print()
         feature_chi = chi2(data_array, label_list)[0]
-
+        for i in feature_chi.tolist():
+            print("%d\t" % int(i), end="")
+        print()
     # 特征拼接
     feature_comb_list = [feature_comb_0, feature_comb_1, feature_comb_2, feature_comb_3, feature_comb_4,
                          feature_comb_5, feature_comb_6, feature_comb_7, feature_comb_8]

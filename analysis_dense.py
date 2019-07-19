@@ -127,7 +127,7 @@ if __name__ == "__main__":
                                dense_feature_comb_4, dense_feature_comb_5, dense_feature_comb_6, dense_feature_comb_7,
                                dense_feature_comb_8]
 
-    if False:
+    if True:
         # 特征交叉, 二阶
         feature_cate_num = len(feature_comb_list)
         for i in range(0, feature_cate_num - 1):
@@ -172,7 +172,7 @@ if __name__ == "__main__":
 
     if True:
         [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha,
-         reg_lambda] = [0.1, 292, 3, 10, 0.49370939396193736, 0.7, 0.6, 1, 3]
+         reg_lambda] = [0.05, 158, 4, 7, 0.5567969076614763, 0.8, 0.9, 0.05, 2]
         if os.path.exists("/root/feature_importance"):
             classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
                                                n_estimators=n_estimators, max_depth=max_depth,
