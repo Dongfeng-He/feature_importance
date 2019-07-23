@@ -249,6 +249,38 @@ def feature_cross_3(feature_comb1, feature_comb2, feature_comb3, one_hot=False):
     return cross_feature_list, index_name_dict
 
 
+def compute_retention_rate(feature_comb_list, label_list):
+    """
+    计算区间留存率
+    """
+    overall_bucket_name_dict = {}
+    add_up_list = []
+    for feature_comb in feature_comb_list:
+        add_up = len(overall_bucket_name_dict)
+        add_up_list.append(add_up)
+        bucket_name_dict = feature_comb[1]
+        for index, bucket_name in bucket_name_dict.items():
+            overall_bucket_name_dict[index + add_up] = bucket_name
+    dim = len(overall_bucket_name_dict)
+    retention_list = [[0, 0] for _ in range(dim)]
+    retention_rate_list = []
+    proportion_list = []
+    for i in range(len(feature_comb_list[0][0])):
+        label = label_list[i]
+        for j in range(len(feature_comb_list)):
+            index = feature_comb_list[j][0][i] + add_up_list[j]
+            retention_list[index][label] += 1
+    for feature in range(dim):
+        positive_num = retention_list[feature][1]
+        total_num = sum(retention_list[feature])
+        retention_rate = positive_num / total_num if total_num > 0 else 0
+        proportion = total_num / len(label_list)
+        retention_rate_list.append(retention_rate)
+        proportion_list.append(proportion)
+    retention_dict = {"retention_rate_list": retention_rate_list, "proportion_list": proportion_list}
+    return retention_dict
+
+
 def feature_concat(feature_comb_list):
     """
     特征拼接

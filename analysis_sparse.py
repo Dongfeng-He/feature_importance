@@ -9,6 +9,7 @@ from sklearn.metrics import precision_recall_fscore_support, roc_auc_score
 import os
 from scipy.sparse import csr_matrix
 import time
+import pickle
 
 
 if __name__ == "__main__":
@@ -52,6 +53,7 @@ if __name__ == "__main__":
         negative_pairs_balanced = random.sample(negative_pairs, len(positive_pairs))
         sample_pairs = positive_pairs + negative_pairs_balanced
         random.shuffle(sample_pairs)
+        # sample_pairs = random.sample(sample_pairs, 1000)
         label_list = list(map(lambda x: x[0], sample_pairs))
         program_cnt = list(map(lambda x: x[1], sample_pairs))
         chan_cnt = list(map(lambda x: x[2], sample_pairs))
@@ -166,7 +168,7 @@ if __name__ == "__main__":
     best_auc = 0
 
     # 参数搜索
-    while True:
+    while False:
         learning_rate = [0.01, 0.05, 0.07, 0.1, 0.2][random.randint(0, 4)]
         n_estimators = random.randint(50, 1000)
         max_depth = random.randint(3, 10)
@@ -223,13 +225,15 @@ if __name__ == "__main__":
         print(result)
         auc_score = roc_auc_score(y_valid, y_pred)
         print("准确率:{:.2%}, 召回率:{:.2%}, F1_score:{:.2%}, AUC_score:{:.2%}".format(float(result[0][1]), float(result[1][1]), float(result[2][1]), auc_score))
-    feature_importance_pairs = list(zip(overall_bucket_name_list, classifier.feature_importances_))
+    with open("retention_dict.pkl", "rb") as f:
+        retention_dict = pickle.load(f)
+    feature_importance_pairs = list(zip(overall_bucket_name_list, classifier.feature_importances_, retention_dict["retention_rate_list"], retention_dict["proportion_list"]))
     sorted_feature_importance = sorted(feature_importance_pairs, key=lambda x: x[1], reverse=True)
     # 打印特征重要性
     for i in range(len(sorted_feature_importance)):
         if "[0, " in sorted_feature_importance[i][0]:
             continue
-        print("%d\t%s\t%f" % (i + 1, sorted_feature_importance[i][0], sorted_feature_importance[i][1]))
+        print("%d\t%s\t%f\t%f\t%f" % (i + 1, sorted_feature_importance[i][0], sorted_feature_importance[i][1], sorted_feature_importance[i][2], sorted_feature_importance[i][3]))
     print()
 
 
