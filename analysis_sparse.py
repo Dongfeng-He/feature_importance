@@ -44,13 +44,14 @@ if __name__ == "__main__":
     label_list = last_flag
 
     # 样本均衡
-    sample_balance = False
+    sample_balance = True
     if sample_balance:
         sample_pairs = list(zip(label_list, program_cnt, chan_cnt, category_cnt, sum_duration, sum_play_day, collect_channel_cnt, collect_category_cnt, chat_cnt, share_channel_cnt))
         positive_pairs = list(filter(lambda x: x[0] == 1, sample_pairs))
         negative_pairs = list(filter(lambda x: x[0] == 0, sample_pairs))
         negative_pairs_balanced = random.sample(negative_pairs, len(positive_pairs))
         sample_pairs = positive_pairs + negative_pairs_balanced
+        random.shuffle(sample_pairs)
         label_list = list(map(lambda x: x[0], sample_pairs))
         program_cnt = list(map(lambda x: x[1], sample_pairs))
         chan_cnt = list(map(lambda x: x[2], sample_pairs))
