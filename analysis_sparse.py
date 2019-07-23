@@ -44,7 +44,7 @@ if __name__ == "__main__":
     label_list = last_flag
 
     # 样本均衡
-    sample_balance = True
+    sample_balance = False
     if sample_balance:
         sample_pairs = list(zip(label_list, program_cnt, chan_cnt, category_cnt, sum_duration, sum_play_day, collect_channel_cnt, collect_category_cnt, chat_cnt, share_channel_cnt))
         positive_pairs = list(filter(lambda x: x[0] == 1, sample_pairs))
