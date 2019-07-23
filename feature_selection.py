@@ -16,18 +16,10 @@ import re
 from sklearn.metrics import precision_recall_fscore_support, roc_auc_score
 
 
-def draw_hist(heights, interval_num, xlabel="", ylabel="", title=""):
-    # 创建直方图
-    # 第一个参数为待绘制的定量数据，不同于定性数据，这里并没有事先进行频数统计
-    # 第二个参数为划分的区间个数
-    plt.hist(heights, interval_num)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.title(title)
-    plt.show()
-
-
 def draw_line(x, y, y_proportion, name_list, title):
+    """
+    绘制折线图
+    """
     name_list = ["[%s)" % re.findall(r'[[](.*?)[)]', name)[0] for name in name_list]
     x, y, y_proportion = (list(t) for t in zip(*sorted(zip(x, y, y_proportion), reverse=False)))
     # plt.plot(x, y)
@@ -49,6 +41,9 @@ def draw_line(x, y, y_proportion, name_list, title):
 
 
 def draw_3d(x, y, z):
+    """
+    绘制 3D 曲面图
+    """
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     #  Blues, Blues_r, BrBG, BrBG_r, BuGn, BuGn_r, BuPu, BuPu_r, CMRmap, CMRmap_r, Dark2, Dark2_r, GnBu, GnBu_r, Greens
@@ -71,7 +66,10 @@ def draw_3d(x, y, z):
     plt.show()
 
 
-def draw_3d_2(x, y, z):
+def draw_3d_2(x, y, z, title):
+    """
+    绘制 3D 曲面图
+    """
     fig = plt.figure()
     ax = fig.gca(projection='3d')
     # Make data.
@@ -85,10 +83,15 @@ def draw_3d_2(x, y, z):
     ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
     # Add a color bar which maps values to colors.
     fig.colorbar(surf, shrink=0.5, aspect=5)
+    # plt.text(2, 2, 0.5, 0.5, color='black', fontsize=10, )
+    plt.title(title)
     plt.show()
 
 
 def draw_retention_rate_2d(feature_comb, label_list, title):
+    """
+    绘制一阶特征留存率与用户占比图像
+    """
     feature_list, bucket_name_dict = feature_comb[0], feature_comb[1]
     feature_size = max(feature_list) + 1
     feature_retention_dict = {feature: [0, 0] for feature in range(feature_size)}
@@ -113,7 +116,10 @@ def draw_retention_rate_2d(feature_comb, label_list, title):
     print()
 
 
-def draw_retention_rate_3d(feature_comb1, feature_comb2, label_list):
+def draw_retention_rate_3d(feature_comb1, feature_comb2, label_list, title):
+    """
+    绘制二阶阶特征留存率与用户占比图像
+    """
     feature_list1, bucket_name_dict1 = feature_comb1[0], feature_comb1[1]
     feature_size1 = max(feature_list1) + 1
     feature_list2, bucket_name_dict2 = feature_comb2[0], feature_comb2[1]
@@ -133,11 +139,13 @@ def draw_retention_rate_3d(feature_comb1, feature_comb2, label_list):
     x = [i for i in range(feature_size1)]
     y = [i for i in range(feature_size2)]
     z = retention_rate_matrix
-    draw_3d_2(x, y, z)
-    print()
+    draw_3d_2(x, y, z, title)
 
 
 def multivariate_pearsonr(X, y):
+    """
+    皮尔逊系数
+    """
     scores, pvalues = [], []
     for ret in map(lambda x: pearsonr(x, y), X.T):
         scores.append(abs(ret[0]))
@@ -188,6 +196,9 @@ class LR(LogisticRegression):
 
 
 def grid_search(x_train, y_train, x_valid, y_valid):
+    """
+    网格搜索 XGBoost 超参数
+    """
     best_auc = 0
     while True:
         learning_rate = [0.01, 0.05, 0.07, 0.1, 0.2][random.randint(0, 4)]
@@ -212,7 +223,6 @@ def grid_search(x_train, y_train, x_valid, y_valid):
                                                colsample_bytree=colsample_bytree, reg_alpha=reg_alpha,
                                                reg_lambda=reg_lambda)
         params = [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha, reg_lambda]
-        # classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500)
         classifier.fit(x_train, y_train)
         # print("耗时：%d min" % int((time.time() - start_time) / 60))
         # x_valid = xgboost.DMatrix(x_valid)
@@ -225,7 +235,7 @@ def grid_search(x_train, y_train, x_valid, y_valid):
             print(params)
 
 
-
+# 测试
 if __name__ == "__main__":
     iris = load_iris()
     x = iris.data[:, 2]
@@ -258,7 +268,7 @@ if __name__ == "__main__":
 
     lr_mix = LR(threshold=0.5, C=0.1)
     lr_mix_model = lr_mix.fit(X=iris.data, y=iris.target)
-    print()
+
 
 
 

@@ -4,9 +4,10 @@ import math
 from scipy.sparse import csr_matrix
 
 
-# 定义一个卡方分箱（可设置参数置信度水平与箱的个数）停止条件为大于置信水平且小于bin的数目
+
 def chi_square_bucketing(feature_list, label_list, confidence_val=3.841, max_bucket_num=10, sample_num=None):
     """
+    卡方分桶
     feature_list: 需要卡方分箱的变量列表
     label_list：正负标签列表
     confidence_val：置信度水平（默认是不进行抽样95%）
@@ -119,6 +120,9 @@ def chi_square_bucketing(feature_list, label_list, confidence_val=3.841, max_buc
 
 
 def even_num_bucketing(feature_list, bucket_num):
+    """
+    等频分桶
+    """
     sorted_list = sorted(feature_list)
     avg_bucket_sample_num = len(feature_list) / bucket_num
     bucket_list = [sorted_list[math.floor(avg_bucket_sample_num * i)] for i in range(1, bucket_num)]
@@ -134,6 +138,9 @@ def even_num_bucketing(feature_list, bucket_num):
 
 
 def create_bucket_name_dict(bucket_list, name):
+    """
+    创建每个桶对应变量区间名字典
+    """
     bucket_name_dict = {}
     for i in range(len(bucket_list) + 1):
         if i == 0:
@@ -147,6 +154,9 @@ def create_bucket_name_dict(bucket_list, name):
 
 
 def feature_discretization(feature_list, bucket_list, one_hot=False):
+    """
+    根据分桶进行离散化
+    """
     cate_list = []
     bucket_list = sorted(bucket_list)
     for feature in feature_list:
@@ -170,6 +180,9 @@ def feature_discretization(feature_list, bucket_list, one_hot=False):
 
 
 def feature_cross_2(feature_comb1, feature_comb2, one_hot=False):
+    """
+    二阶特征交叉
+    """
     feature_list1 = feature_comb1[0]
     feature_list2 = feature_comb2[0]
     bucket_name_dict1 = feature_comb1[1]
@@ -200,6 +213,9 @@ def feature_cross_2(feature_comb1, feature_comb2, one_hot=False):
 
 
 def feature_cross_3(feature_comb1, feature_comb2, feature_comb3, one_hot=False):
+    """
+    三阶特征交叉
+    """
     feature_list1 = feature_comb1[0]
     feature_list2 = feature_comb2[0]
     feature_list3 = feature_comb3[0]
@@ -234,6 +250,9 @@ def feature_cross_3(feature_comb1, feature_comb2, feature_comb3, one_hot=False):
 
 
 def feature_concat(feature_comb_list):
+    """
+    特征拼接
+    """
     overall_bucket_name_dict = {}
     add_up_list = []
     for feature_comb in feature_comb_list:
@@ -254,6 +273,9 @@ def feature_concat(feature_comb_list):
 
 
 def feature_concat_dense(feature_comb_list):
+    """
+    特征拼接，连续
+    """
     overall_bucket_name_dict = {}
     add_up_list = []
     for feature_comb in feature_comb_list:
@@ -272,6 +294,9 @@ def feature_concat_dense(feature_comb_list):
 
 
 def feature_concat_sparse(feature_comb_list, train_num):
+    """
+    特征拼接，onehot
+    """
     overall_bucket_name_dict = {}
     add_up_list = []
     for feature_comb in feature_comb_list:
@@ -303,6 +328,7 @@ def feature_concat_sparse(feature_comb_list, train_num):
     return train_csr, valid_csr, overall_bucket_name_dict
 
 
+# 测试
 if __name__ == "__main__":
     # feature_list = [12, 23, -10, -9, 23, 1, 3, 23, 2, 35, 2, 3235, 573, 123, 5, 46, 46, 4123]
     feature_list1 = [-12, -23, -1, -2, -23, -1, -3, -23, -2, -35, -2, -3235, -573, -123, -5, -46, -46, -4123]
@@ -336,7 +362,6 @@ if __name__ == "__main__":
     sample_list, overall_bucket_name_dict = feature_concat(feature_comb_list)
 
 
-    print(1)
 
 
 

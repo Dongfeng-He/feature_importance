@@ -1,13 +1,12 @@
+import collections
 import numpy as np
 import pandas as pd
-import collections
 from preprocessing import *
 from feature_selection import *
 import xgboost
 import random
 from sklearn.metrics import precision_recall_fscore_support, roc_auc_score
 import os
-from scipy.sparse import csr_matrix
 import time
 import itertools
 import re
@@ -54,6 +53,7 @@ if __name__ == "__main__":
     chat_cnt_counter = collections.Counter(chat_cnt)
     share_channel_cnt_counter = collections.Counter(share_channel_cnt)
     label_list = last_flag
+
     # 分桶
     # bucket_list = even_num_bucketing(feature_list=list(filter(lambda x: x!=0, program_cnt)), bucket_num=20)
     program_cnt_buckets = [1, 2, 3, 4, 5, 6, 7, 9, 12, 15, 19, 24, 32, 43, 61, 93, 162]
@@ -77,28 +77,20 @@ if __name__ == "__main__":
     # 离散化
     program_cnt_bucket_name = create_bucket_name_dict(program_cnt_buckets, "program_cnt")
     program_cnt_features = feature_discretization(program_cnt, program_cnt_buckets)
-
     chan_cnt_bucket_name = create_bucket_name_dict(chan_cnt_buckets, "chan_cnt")
     chan_cnt_features = feature_discretization(chan_cnt, chan_cnt_buckets)
-
     category_cnt_bucket_name = create_bucket_name_dict(category_cnt_buckets, "category_cnt")
     category_cnt_features = feature_discretization(category_cnt, category_cnt_buckets)
-
     sum_duration_bucket_name = create_bucket_name_dict(sum_duration_buckets, "sum_duration")
     sum_duration_features = feature_discretization(sum_duration, sum_duration_buckets)
-
     sum_play_day_bucket_name = create_bucket_name_dict(sum_play_day_buckets, "sum_play_day")
     sum_play_day_features = feature_discretization(sum_play_day, sum_play_day_buckets)
-
     collect_channel_cnt_bucket_name = create_bucket_name_dict(collect_channel_cnt_buckets, "collect_channel_cnt")
     collect_channel_cnt_features = feature_discretization(collect_channel_cnt, collect_channel_cnt_buckets)
-
     collect_category_cnt_bucket_name = create_bucket_name_dict(collect_category_cnt_buckets, "collect_category_cnt")
     collect_category_cnt_features = feature_discretization(collect_category_cnt, collect_category_cnt_buckets)
-
     chat_cnt_bucket_name = create_bucket_name_dict(chat_cnt_buckets, "chat_cnt")
     chat_cnt_features = feature_discretization(chat_cnt, chat_cnt_buckets)
-
     share_channel_cnt_bucket_name = create_bucket_name_dict(share_channel_cnt_buckets, "share_channel_cnt")
     share_channel_cnt_features = feature_discretization(share_channel_cnt, share_channel_cnt_buckets)
 
@@ -126,8 +118,7 @@ if __name__ == "__main__":
     dense_feature_comb_list = [dense_feature_comb_0, dense_feature_comb_1, dense_feature_comb_2, dense_feature_comb_3,
                                dense_feature_comb_4, dense_feature_comb_5, dense_feature_comb_6, dense_feature_comb_7,
                                dense_feature_comb_8]
-
-    if True:
+    if False:
         # 特征交叉, 二阶
         feature_cate_num = len(feature_comb_list)
         for i in range(0, feature_cate_num - 1):
@@ -146,6 +137,7 @@ if __name__ == "__main__":
             dense_feature_comb_list.append(feature_comb)
 
     # 训练 XGBoost
+    sample_balance = True
     sample_list, overall_bucket_name_dict = feature_concat_dense(dense_feature_comb_list)
     overall_bucket_name_list = [overall_bucket_name_dict[i] for i in range(len(overall_bucket_name_dict))]
     # 训练 XGBoost
@@ -154,6 +146,15 @@ if __name__ == "__main__":
     sample_num = int(len(sample_list) * sample_rate)
     sample_list = sample_list[: sample_num]
     label_list = label_list[: sample_num]
+    # 样本均衡
+    if sample_balance:
+        sample_pairs = list(zip(sample_list, label_list))
+        positive_pairs = list(filter(lambda x: x[1] == 1, sample_pairs))
+        negative_pairs = list(filter(lambda x: x[1] == 0, sample_pairs))
+        negative_pairs_balanced = random.sample(negative_pairs, len(positive_pairs))
+        sample_pairs = positive_pairs + negative_pairs_balanced
+        sample_list = list(map(lambda x: x[0], sample_pairs))
+        label_list = list(map(lambda x: x[1], sample_pairs))
     train_num = int(len(sample_list) * split_rate)
     random.seed(1)
     random.shuffle(sample_list)
@@ -164,41 +165,43 @@ if __name__ == "__main__":
     x_train = np.array(sample_list[:train_num])
     y_train = np.array(label_list[:train_num])
 
+    # 参数搜索
     if False:
         # 一阶: [0.1, 292, 3, 10, 0.49370939396193736, 0.7, 0.6, 1, 3]
         # 二阶: [0.05, 158, 4, 7, 0.5567969076614763, 0.8, 0.9, 0.05, 2]
         # 三阶: [0.05, 437, 6, 1, 0.28736142018256616, 0.9, 0.9, 3, 2]
         grid_search(x_train, y_train, x_valid, y_valid)
 
+    # 初始化 XGBoost 参数
     if True:
         [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha,
          reg_lambda] = [0.05, 158, 4, 7, 0.5567969076614763, 0.8, 0.9, 0.05, 2]
+        # 使用 GPU 加速
         if os.path.exists("/root/feature_importance"):
             classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
                                                n_estimators=n_estimators, max_depth=max_depth,
                                                min_child_weight=min_child_weight, gamma=gamma, subsample=subsample,
                                                colsample_bytree=colsample_bytree, reg_alpha=reg_alpha,
                                                reg_lambda=reg_lambda, tree_method='gpu_hist')
+        # 不使用 GPU 加速
         else:
             classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
                                                n_estimators=n_estimators, max_depth=max_depth,
                                                min_child_weight=min_child_weight, gamma=gamma, subsample=subsample,
                                                colsample_bytree=colsample_bytree, reg_alpha=reg_alpha,
                                                reg_lambda=reg_lambda)
-    # classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500)
+
+    # 开始训练
     start_time = time.time()
     classifier.fit(x_train, y_train)
     print("耗时：%d min" % int((time.time() - start_time) / 60))
-    # x_valid = xgboost.DMatrix(x_valid)
     y_pred = classifier.predict(x_valid)
     result = precision_recall_fscore_support(y_valid, y_pred)
     auc_score = roc_auc_score(y_valid, y_pred)
     print("XGBoost分类器：「准确率:{:.2%}」 「召回率:{:.2%}」 「F1_score:{:.2%}」 「AUC_score:{:.2%}」".format(float(result[0][1]), float(result[1][1]), float(result[2][1]), auc_score))
-    # print(classifier.feature_importances_)
-    # xgboost.plot_importance(classifier)
-    # plt.show()
     feature_importance_pairs = list(zip(overall_bucket_name_list, classifier.feature_importances_))
     sorted_feature_importance = sorted(feature_importance_pairs, key=lambda x: x[1], reverse=True)
+    # 打印特征重要性
     for i in range(len(sorted_feature_importance)):
         print("%d\t%s\t%f" % (i + 1, sorted_feature_importance[i][0], sorted_feature_importance[i][1]))
-    print()
+
