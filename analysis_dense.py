@@ -118,7 +118,7 @@ if __name__ == "__main__":
     dense_feature_comb_list = [dense_feature_comb_0, dense_feature_comb_1, dense_feature_comb_2, dense_feature_comb_3,
                                dense_feature_comb_4, dense_feature_comb_5, dense_feature_comb_6, dense_feature_comb_7,
                                dense_feature_comb_8]
-    if False:
+    if True:
         # 特征交叉, 二阶
         feature_cate_num = len(feature_comb_list)
         for i in range(0, feature_cate_num - 1):
