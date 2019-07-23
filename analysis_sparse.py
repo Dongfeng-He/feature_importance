@@ -203,7 +203,7 @@ if __name__ == "__main__":
 
     # 训练
     if True:
-        [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha, reg_lambda] = [0.1, 743, 10, 8, 0.5887866006575845, 0.6, 0.6, 1, 2]
+        [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha, reg_lambda] = [0.05, 892, 3, 3, 0.26085650807557614, 0.9, 0.6, 1, 2]
         if os.path.exists("/root/feature_importance"):
             classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
                                                n_estimators=n_estimators, max_depth=max_depth,
