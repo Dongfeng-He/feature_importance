@@ -233,7 +233,7 @@ if __name__ == "__main__":
     for i in range(len(sorted_feature_importance)):
         #if "[0, " in sorted_feature_importance[i][0]:
         #    continue
-        print("%d\t%s\t%f\t%f\t%f" % (i + 1, sorted_feature_importance[i][0], sorted_feature_importance[i][1], sorted_feature_importance[i][2], sorted_feature_importance[i][3]))
+        print("%d\t\t%s\t\t%f\t\t%f\t\t%f" % (i + 1, sorted_feature_importance[i][0], sorted_feature_importance[i][1], sorted_feature_importance[i][2], sorted_feature_importance[i][3]))
     print()
 
 
