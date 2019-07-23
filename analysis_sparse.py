@@ -42,6 +42,26 @@ if __name__ == "__main__":
     chat_cnt_counter = collections.Counter(chat_cnt)
     share_channel_cnt_counter = collections.Counter(share_channel_cnt)
     label_list = last_flag
+
+    # 样本均衡
+    sample_balance = True
+    if sample_balance:
+        sample_pairs = list(zip(label_list, program_cnt, chan_cnt, category_cnt, sum_duration, sum_play_day, collect_channel_cnt, collect_category_cnt, chat_cnt, share_channel_cnt))
+        positive_pairs = list(filter(lambda x: x[0] == 1, sample_pairs))
+        negative_pairs = list(filter(lambda x: x[0] == 0, sample_pairs))
+        negative_pairs_balanced = random.sample(negative_pairs, len(positive_pairs))
+        sample_pairs = positive_pairs + negative_pairs_balanced
+        label_list = list(map(lambda x: x[0], sample_pairs))
+        program_cnt = list(map(lambda x: x[1], sample_pairs))
+        chan_cnt = list(map(lambda x: x[2], sample_pairs))
+        category_cnt = list(map(lambda x: x[3], sample_pairs))
+        sum_duration = list(map(lambda x: x[4], sample_pairs))
+        sum_play_day = list(map(lambda x: x[5], sample_pairs))
+        collect_channel_cnt = list(map(lambda x: x[6], sample_pairs))
+        collect_category_cnt = list(map(lambda x: x[7], sample_pairs))
+        chat_cnt = list(map(lambda x: x[8], sample_pairs))
+        share_channel_cnt = list(map(lambda x: x[9], sample_pairs))
+
     # 分桶
     # bucket_list = even_num_bucketing(feature_list=list(filter(lambda x: x!=0, program_cnt)), bucket_num=20)
     program_cnt_buckets = [1, 2, 3, 4, 5, 6, 7, 9, 12, 15, 19, 24, 32, 43, 61, 93, 162]
@@ -65,28 +85,20 @@ if __name__ == "__main__":
     # 离散化
     program_cnt_bucket_name = create_bucket_name_dict(program_cnt_buckets, "program_cnt")
     program_cnt_features = feature_discretization(program_cnt, program_cnt_buckets)
-
     chan_cnt_bucket_name = create_bucket_name_dict(chan_cnt_buckets, "chan_cnt")
     chan_cnt_features = feature_discretization(chan_cnt, chan_cnt_buckets)
-
     category_cnt_bucket_name = create_bucket_name_dict(category_cnt_buckets, "category_cnt")
     category_cnt_features = feature_discretization(category_cnt, category_cnt_buckets)
-
     sum_duration_bucket_name = create_bucket_name_dict(sum_duration_buckets, "sum_duration")
     sum_duration_features = feature_discretization(sum_duration, sum_duration_buckets)
-
     sum_play_day_bucket_name = create_bucket_name_dict(sum_play_day_buckets, "sum_play_day")
     sum_play_day_features = feature_discretization(sum_play_day, sum_play_day_buckets)
-
     collect_channel_cnt_bucket_name = create_bucket_name_dict(collect_channel_cnt_buckets, "collect_channel_cnt")
     collect_channel_cnt_features = feature_discretization(collect_channel_cnt, collect_channel_cnt_buckets)
-
     collect_category_cnt_bucket_name = create_bucket_name_dict(collect_category_cnt_buckets, "collect_category_cnt")
     collect_category_cnt_features = feature_discretization(collect_category_cnt, collect_category_cnt_buckets)
-
     chat_cnt_bucket_name = create_bucket_name_dict(chat_cnt_buckets, "chat_cnt")
     chat_cnt_features = feature_discretization(chat_cnt, chat_cnt_buckets)
-
     share_channel_cnt_bucket_name = create_bucket_name_dict(share_channel_cnt_buckets, "share_channel_cnt")
     share_channel_cnt_features = feature_discretization(share_channel_cnt, share_channel_cnt_buckets)
 
@@ -133,12 +145,6 @@ if __name__ == "__main__":
     if True:
         feature_comb_list = [feature_comb_0, feature_comb_1, feature_comb_2, feature_comb_3, feature_comb_4,
                              feature_comb_5, feature_comb_6, feature_comb_7, feature_comb_8]
-    if False:
-        feature_comb_list = [feature_comb_0, feature_comb_1, feature_comb_2, feature_comb_3,
-                             feature_comb_5, feature_comb_6, feature_comb_7, feature_comb_8]
-    if False:
-        feature_comb_list = [feature_comb_0, feature_comb_1, feature_comb_2, feature_comb_3, feature_comb_4,
-                             feature_comb_5, feature_comb_6]
 
     if True:
         # 特征交叉
@@ -157,6 +163,8 @@ if __name__ == "__main__":
     y_valid = np.array(label_list[train_num:])
     y_train = np.array(label_list[:train_num])
     best_auc = 0
+
+    # 参数搜索
     while False:
         learning_rate = [0.01, 0.05, 0.07, 0.1, 0.2][random.randint(0, 4)]
         n_estimators = random.randint(50, 1000)
@@ -180,11 +188,8 @@ if __name__ == "__main__":
                                                colsample_bytree=colsample_bytree, reg_alpha=reg_alpha,
                                                reg_lambda=reg_lambda)
         params = [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha, reg_lambda]
-        # classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, n_estimators=500)
         start_time = time.time()
         classifier.fit(train_csr, y_train)
-        # print("耗时：%d min" % int((time.time() - start_time) / 60))
-        # x_valid = xgboost.DMatrix(x_valid)
         y_pred = classifier.predict(valid_csr)
         result = precision_recall_fscore_support(y_valid, y_pred)
         auc_score = roc_auc_score(y_valid, y_pred)
@@ -192,9 +197,8 @@ if __name__ == "__main__":
             best_auc = auc_score
             print("准确率:{:.2%}, 召回率:{:.2%}, F1_score:{:.2%}, AUC_score:{:.2%}".format(float(result[0][1]), float(result[1][1]), float(result[2][1]), auc_score))
             print(params)
-    # print(classifier.feature_importances_)
-    # xgboost.plot_importance(classifier)
-    # plt.show()
+
+    # 训练
     if True:
         [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha, reg_lambda] = [0.1, 743, 10, 8, 0.5887866006575845, 0.6, 0.6, 1, 2]
         if os.path.exists("/root/feature_importance"):
@@ -219,6 +223,7 @@ if __name__ == "__main__":
         print("准确率:{:.2%}, 召回率:{:.2%}, F1_score:{:.2%}, AUC_score:{:.2%}".format(float(result[0][1]), float(result[1][1]), float(result[2][1]), auc_score))
     feature_importance_pairs = list(zip(overall_bucket_name_list, classifier.feature_importances_))
     sorted_feature_importance = sorted(feature_importance_pairs, key=lambda x: x[1], reverse=True)
+    # 打印特征重要性
     for i in range(len(sorted_feature_importance)):
         if "[0, " in sorted_feature_importance[i][0]:
             continue
