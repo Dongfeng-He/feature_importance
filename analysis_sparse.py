@@ -231,8 +231,8 @@ if __name__ == "__main__":
     sorted_feature_importance = sorted(feature_importance_pairs, key=lambda x: x[1], reverse=True)
     # 打印特征重要性
     for i in range(len(sorted_feature_importance)):
-        if "[0, " in sorted_feature_importance[i][0]:
-            continue
+        #if "[0, " in sorted_feature_importance[i][0]:
+        #    continue
         print("%d\t%s\t%f\t%f\t%f" % (i + 1, sorted_feature_importance[i][0], sorted_feature_importance[i][1], sorted_feature_importance[i][2], sorted_feature_importance[i][3]))
     print()
 
