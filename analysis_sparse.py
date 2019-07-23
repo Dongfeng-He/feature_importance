@@ -219,6 +219,7 @@ if __name__ == "__main__":
         # x_valid = xgboost.DMatrix(x_valid)
         y_pred = classifier.predict(valid_csr)
         result = precision_recall_fscore_support(y_valid, y_pred)
+        print(result)
         auc_score = roc_auc_score(y_valid, y_pred)
         print("准确率:{:.2%}, 召回率:{:.2%}, F1_score:{:.2%}, AUC_score:{:.2%}".format(float(result[0][1]), float(result[1][1]), float(result[2][1]), auc_score))
     feature_importance_pairs = list(zip(overall_bucket_name_list, classifier.feature_importances_))
