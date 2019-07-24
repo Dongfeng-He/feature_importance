@@ -9,11 +9,20 @@ from sklearn.ensemble import GradientBoostingClassifier
 from mpl_toolkits.mplot3d import Axes3D # 虽然不直接调用，但不能删除
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from matplotlib import cm
+from matplotlib.ticker import FuncFormatter
 import xgboost
 import random
 import os
 import re
 from sklearn.metrics import precision_recall_fscore_support, roc_auc_score
+
+
+plt.rcParams['font.family'] = ['sans-serif']
+plt.rcParams['font.sans-serif'] = ['SimHei']
+
+
+def to_percent(temp, position):
+    return '%1.0f' % (100 * temp) + '%'
 
 
 def draw_line(x, y, y_proportion, name_list, title):
@@ -27,12 +36,14 @@ def draw_line(x, y, y_proportion, name_list, title):
     # plt.show()
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
-    ax1.plot(x, y, label=u'retention_rate')
+    ax1.plot(x, y, label=u'retention rate')
+    plt.gca().yaxis.set_major_formatter(FuncFormatter(to_percent))
     plt.xticks(x[::1], name_list[::1], rotation=90)
     ax1.legend(loc=1)
     plt.legend(prop={'family': 'SimHei', 'size': 8}, loc="upper left")
     ax2 = ax1.twinx()  # this is the important function
-    plt.bar(x, y_proportion, alpha=0.3, color='blue', label=u'proportion')
+    plt.bar(x, y_proportion, alpha=0.3, color='blue', label=u'user proportion')
+    plt.gca().yaxis.set_major_formatter(FuncFormatter(to_percent))
     ax2.legend(loc=2)
     ax2.set_ylim([0, 0.3])  # 设置y轴取值范围
     plt.legend(prop={'family': 'SimHei', 'size': 8}, loc="upper right")
@@ -113,6 +124,48 @@ def draw_retention_rate_2d(feature_comb, label_list, title):
         y_proportion.append(proportion)
         name_list.append(bucket_name_dict[feature])
     draw_line(x, y, y_proportion, name_list, title)
+    print()
+
+
+def draw_retention_eff(feature_comb, label_list, title):
+    feature_list, bucket_name_dict = feature_comb[0], feature_comb[1]
+    feature_size = max(feature_list) + 1
+    feature_retention_dict = {feature: [0, 0] for feature in range(feature_size)}
+    for feature, label in zip(feature_list, label_list):
+        feature_retention_dict[feature][label] += 1
+    feature_retention_rate_dict = {}
+    x = []
+    retention_rate_list = []
+    proportion_list = []
+    name_list = []
+    for feature in range(feature_size):
+        positive_num = feature_retention_dict[feature][1]
+        total_num = sum(feature_retention_dict[feature])
+        retention_rate = positive_num / total_num if total_num > 0 else 0
+        proportion = total_num / len(feature_list)
+        feature_retention_rate_dict[feature] = retention_rate
+        x.append(feature)
+        retention_rate_list.append(retention_rate)
+        proportion_list.append(proportion)
+        name_list.append(bucket_name_dict[feature])
+    retention_eff_list = []
+    for feature in range(feature_size - 2):
+        proportion = proportion_list[feature]
+        retention_rate = retention_rate_list[feature]
+        retention_rate_next = retention_rate_list[feature + 1]
+        eff = proportion * (retention_rate_next - retention_rate)
+        retention_eff_list.append(eff)
+    x = x[:-2]
+    name_list = ["[%s)" % re.findall(r'[[](.*?)[)]', name)[0] for name in name_list]
+    x, y = (list(t) for t in zip(*sorted(zip(x, retention_eff_list), reverse=False)))
+    fig = plt.figure()
+    ax1 = fig.add_subplot(111)
+    ax1.plot(x, y, label=u'retention_push_efficiency')
+    plt.xticks(x[::1], name_list[::1], rotation=90)
+    ax1.legend(loc=1)
+    plt.legend(prop={'family': 'SimHei', 'size': 8}, loc="upper right")
+    plt.title(title)
+    plt.show()
     print()
 
 

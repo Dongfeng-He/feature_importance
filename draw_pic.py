@@ -39,31 +39,31 @@ if __name__ == "__main__":
     # 分桶
     # bucket_list = even_num_bucketing(feature_list=list(filter(lambda x: x!=0, program_cnt)), bucket_num=20)
     # program_cnt_buckets = [1, 2, 3, 4, 5, 6, 7, 9, 12, 15, 19, 24, 32, 43, 61, 93, 162]
-    program_cnt_buckets = [i for i in range(0, 162, 3)]
+    program_cnt_buckets = [i for i in range(1, 162, 3)]
     # bucket_list = even_num_bucketing(feature_list=list(filter(lambda x: x != 0, chan_cnt)), bucket_num=15)
     # chan_cnt_buckets = [1, 2, 3, 4, 5, 7, 9, 13]
-    chan_cnt_buckets = [i for i in range(20)]
+    chan_cnt_buckets = [i for i in range(1, 20)]
     # bucket_list = even_num_bucketing(feature_list=list(filter(lambda x: x != 0, category_cnt)), bucket_num=10)
     # category_cnt_buckets = [1, 2, 3, 4]
-    category_cnt_buckets = [i for i in range(10)]
+    category_cnt_buckets = [i for i in range(1, 10)]
     # bucket_list = even_num_bucketing(feature_list=list(filter(lambda x: x != 0, sum_duration)), bucket_num=20)
     # sum_duration_buckets = [23, 62, 138, 289, 572, 1024, 1630, 2457, 3569, 5095, 7208, 10200, 14376, 20240, 28447, 41039, 61738, 100081, 185248]
-    sum_duration_buckets = [i for i in range(0, 100000, 3000)]
+    sum_duration_buckets = [i for i in range(3000, 100000, 3000)]
     # bucket_list = even_num_bucketing(feature_list=list(filter(lambda x: x != 0, sum_play_day)), bucket_num=15)
     # sum_play_day_buckets = [1, 2, 3, 4, 5, 6, 8, 10, 13]
-    sum_play_day_buckets = [i for i in range(20)]
+    sum_play_day_buckets = [i for i in range(1, 20)]
     # bucket_list = even_num_bucketing(feature_list=list(filter(lambda x: x != 0, collect_channel_cnt)), bucket_num=15)
     # collect_channel_cnt_buckets = [1, 2, 3, 4, 9]
-    collect_channel_cnt_buckets = [i for i in range(20)]
+    collect_channel_cnt_buckets = [i for i in range(1, 20)]
     # bucket_list = even_num_bucketing(feature_list=list(filter(lambda x: x != 0, collect_category_cnt)), bucket_num=10)
     # collect_category_cnt_buckets = [1, 2, 3, 4, 7, 13]
-    collect_category_cnt_buckets = [i for i in range(20)]
+    collect_category_cnt_buckets = [i for i in range(1, 20)]
     # bucket_list = even_num_bucketing(feature_list=list(filter(lambda x: x != 0, chat_cnt)), bucket_num=40)
     # chat_cnt_buckets = [1, 2]
-    chat_cnt_buckets = [i for i in range(10)]
+    chat_cnt_buckets = [i for i in range(1, 10)]
     # bucket_list = even_num_bucketing(feature_list=list(filter(lambda x: x != 0, share_channel_cnt)), bucket_num=40)
     # share_channel_cnt_buckets = [1, 2, 3]
-    share_channel_cnt_buckets = [i for i in range(10)]
+    share_channel_cnt_buckets = [i for i in range(1, 10)]
 
     # 离散化
     program_cnt_bucket_name = create_bucket_name_dict(program_cnt_buckets, "program_cnt")
@@ -94,6 +94,19 @@ if __name__ == "__main__":
     collect_category_cnt_comb = [collect_category_cnt_features, collect_category_cnt_bucket_name]
     chat_cnt_comb = [chat_cnt_features, chat_cnt_bucket_name]
     share_channel_cnt_comb = [share_channel_cnt_features, share_channel_cnt_bucket_name]
+
+    # 留存推动效率
+    """
+    draw_retention_eff(sum_play_day_comb, label_list, "Sum Play Day")
+    draw_retention_eff(sum_duration_comb, label_list, "Sum Duration")
+    draw_retention_eff(program_cnt_comb, label_list, "Program Count")
+    draw_retention_eff(category_cnt_comb, label_list, "Category Count")
+    draw_retention_eff(chan_cnt_comb, label_list, "Channel Count")
+    draw_retention_eff(collect_channel_cnt_comb, label_list, "Collect Channel Count")
+    draw_retention_eff(collect_category_cnt_comb, label_list, "Collect Category Count")
+    draw_retention_eff(share_channel_cnt_comb, label_list, "Share Channel Count")
+    draw_retention_eff(chat_cnt_comb, label_list, "Chat Count")
+    """
 
     # 一阶留存率曲线
     draw_retention_rate_2d(sum_play_day_comb, label_list, "Sum Play Day")

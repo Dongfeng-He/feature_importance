@@ -233,7 +233,12 @@ if __name__ == "__main__":
     for i in range(len(sorted_feature_importance)):
         #if "[0, " in sorted_feature_importance[i][0]:
         #    continue
-        print("%d\t\t%s\t\t%f\t\t%f\t\t%f" % (i + 1, sorted_feature_importance[i][0], sorted_feature_importance[i][1], sorted_feature_importance[i][2], sorted_feature_importance[i][3]))
+        name = sorted_feature_importance[i][0]
+        s = re.findall(r'[[](.*?)[)]', name)
+        for v in s:
+            name = name.replace(v, "")
+        name = name.replace("[)", "").replace(" ", ", ")
+        print("%d\t\t%s\t\t%f\t\t%f\t\t%f\t\t%s" % (i + 1, sorted_feature_importance[i][0], sorted_feature_importance[i][1], sorted_feature_importance[i][2], sorted_feature_importance[i][3], name))
     print()
 
 
