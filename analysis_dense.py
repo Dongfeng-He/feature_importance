@@ -196,7 +196,7 @@ if __name__ == "__main__":
     # 初始化 XGBoost 参数
     if True:
         [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha,
-         reg_lambda] = [0.05, 158, 4, 7, 0.5567969076614763, 0.8, 0.9, 0.05, 2]
+         reg_lambda] = [0.01, 979, 4, 2, 0.2402852522768281, 0.7, 0.7, 0.1, 0.05]
         # 使用 GPU 加速
         if os.path.exists("/root/feature_importance"):
             classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
