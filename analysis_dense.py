@@ -148,7 +148,7 @@ if __name__ == "__main__":
     dense_feature_comb_list = [dense_feature_comb_0, dense_feature_comb_1, dense_feature_comb_2, dense_feature_comb_3,
                                dense_feature_comb_4, dense_feature_comb_5, dense_feature_comb_6, dense_feature_comb_7,
                                dense_feature_comb_8]
-    if False:
+    if True:
         # 特征交叉, 二阶
         feature_cate_num = len(feature_comb_list)
         for i in range(0, feature_cate_num - 1):
@@ -167,7 +167,6 @@ if __name__ == "__main__":
             dense_feature_comb_list.append(feature_comb)
 
     # 训练 XGBoost
-    sample_balance = True
     sample_list, overall_bucket_name_dict = feature_concat_dense(dense_feature_comb_list)
     overall_bucket_name_list = [overall_bucket_name_dict[i] for i in range(len(overall_bucket_name_dict))]
     # 训练 XGBoost
@@ -187,7 +186,7 @@ if __name__ == "__main__":
     y_train = np.array(label_list[:train_num])
 
     # 参数搜索
-    if False:
+    if True:
         # 一阶: [0.1, 292, 3, 10, 0.49370939396193736, 0.7, 0.6, 1, 3]
         # 二阶: [0.05, 158, 4, 7, 0.5567969076614763, 0.8, 0.9, 0.05, 2]
         # 三阶: [0.05, 437, 6, 1, 0.28736142018256616, 0.9, 0.9, 3, 2]
