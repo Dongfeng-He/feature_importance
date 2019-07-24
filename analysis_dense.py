@@ -47,7 +47,7 @@ if __name__ == "__main__":
     label_list = last_flag
 
     # 数据清理
-    clean_data = True
+    clean_data = False
     if clean_data:
         # 删除收听总时长1分钟以内，收听节目数1个以下，收听天数1天以下的用户
         sample_pairs = list(zip(label_list, program_cnt, chan_cnt, category_cnt, sum_duration, sum_play_day, collect_channel_cnt, collect_category_cnt, chat_cnt, share_channel_cnt))
