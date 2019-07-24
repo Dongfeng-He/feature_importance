@@ -187,7 +187,7 @@ if __name__ == "__main__":
     y_train = np.array(label_list[:train_num])
 
     # 参数搜索
-    if True:
+    if False:
         # 一阶: [0.1, 292, 3, 10, 0.49370939396193736, 0.7, 0.6, 1, 3]
         # 二阶: [0.05, 158, 4, 7, 0.5567969076614763, 0.8, 0.9, 0.05, 2]
         # 三阶: [0.05, 437, 6, 1, 0.28736142018256616, 0.9, 0.9, 3, 2]
@@ -196,7 +196,7 @@ if __name__ == "__main__":
     # 初始化 XGBoost 参数
     if True:
         [learning_rate, n_estimators, max_depth, min_child_weight, gamma, subsample, colsample_bytree, reg_alpha,
-         reg_lambda] = [0.01, 979, 4, 2, 0.2402852522768281, 0.7, 0.7, 0.1, 0.05]
+         reg_lambda] = [0.01, 713, 7, 2, 0.2200340410466973, 0.7, 0.7, 1, 0.05]
         # 使用 GPU 加速
         if os.path.exists("/root/feature_importance"):
             classifier = xgboost.XGBClassifier(n_jobs=-1, random_state=0, seed=10, learning_rate=learning_rate,
