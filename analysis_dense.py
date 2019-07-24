@@ -51,7 +51,8 @@ if __name__ == "__main__":
     if clean_data:
         # 删除收听总时长1分钟以内，收听节目数1个以下，收听天数1天以下的用户
         sample_pairs = list(zip(label_list, program_cnt, chan_cnt, category_cnt, sum_duration, sum_play_day, collect_channel_cnt, collect_category_cnt, chat_cnt, share_channel_cnt))
-        sample_pairs = list(filter(lambda x: x[1] > 1 and x[2] > 1 and x[4] > 60 and x[5] > 1, sample_pairs))
+        # sample_pairs = list(filter(lambda x: x[1] > 1 and x[2] > 1 and x[4] > 60 and x[5] > 1, sample_pairs))
+        sample_pairs = list(filter(lambda x: x[1] > 0, sample_pairs))
         label_list = list(map(lambda x: x[0], sample_pairs))
         program_cnt = list(map(lambda x: x[1], sample_pairs))
         chan_cnt = list(map(lambda x: x[2], sample_pairs))
