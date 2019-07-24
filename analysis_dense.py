@@ -116,8 +116,11 @@ if __name__ == "__main__":
     feature_comb_6 = [collect_category_cnt_features, collect_category_cnt_bucket_name]
     feature_comb_7 = [chat_cnt_features, chat_cnt_bucket_name]
     feature_comb_8 = [share_channel_cnt_features, share_channel_cnt_bucket_name]
+    """
     feature_comb_list = [feature_comb_0, feature_comb_1, feature_comb_2, feature_comb_3, feature_comb_4,
                          feature_comb_5, feature_comb_6, feature_comb_7, feature_comb_8]
+    """
+    feature_comb_list = [feature_comb_0, feature_comb_1, feature_comb_2, feature_comb_5, feature_comb_6]
 
     dense_feature_comb_0 = [program_cnt, convert_dict(program_cnt_bucket_name)]
     dense_feature_comb_1 = [chan_cnt, convert_dict(chan_cnt_bucket_name)]
