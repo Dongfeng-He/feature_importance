@@ -238,7 +238,7 @@ if __name__ == "__main__":
         for v in s:
             name = name.replace(v, "")
         name = name.replace("[)", "").replace(" ", ", ")
-        print("%d\t\t%s\t\t%f\t\t%f\t\t%f\t\t%s" % (i + 1, sorted_feature_importance[i][0], sorted_feature_importance[i][1], sorted_feature_importance[i][2], sorted_feature_importance[i][3], name))
+        print("%d\t\t%s\t\t%s\t\t%f\t\t%f\t\t%f" % (i + 1, sorted_feature_importance[i][0], name, sorted_feature_importance[i][1], sorted_feature_importance[i][2], sorted_feature_importance[i][3]))
     print()
 
 
