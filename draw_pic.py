@@ -95,8 +95,19 @@ if __name__ == "__main__":
     chat_cnt_comb = [chat_cnt_features, chat_cnt_bucket_name]
     share_channel_cnt_comb = [share_channel_cnt_features, share_channel_cnt_bucket_name]
 
-    # 留存推动效率
     """
+    draw_retention_rate_3d(collect_channel_cnt_comb, chat_cnt_comb, label_list, "chat_cnt * collect_channel_cnt")
+    draw_retention_rate_3d(sum_play_day_comb, collect_channel_cnt_comb, label_list, "collect_channel_cnt * sum_play_day")
+    draw_retention_rate_3d(sum_play_day_comb, share_channel_cnt_comb, label_list, "share_channel_cnt * sum_play_day")
+    draw_retention_rate_3d(sum_play_day_comb, collect_category_cnt_comb, label_list, "collect_category_cnt * sum_play_day")
+    draw_retention_rate_3d(sum_play_day_comb, sum_duration_comb, label_list, "sum_duration * sum_play_day")
+    draw_retention_rate_3d(sum_play_day_comb, chat_cnt_comb, label_list, "chat_cnt * sum_play_day")
+    draw_retention_rate_3d(sum_duration_comb, collect_channel_cnt_comb, label_list, "collect_channel_cnt * sum_duration")
+    draw_retention_rate_3d(program_cnt_comb, category_cnt_comb, label_list, "category_cnt * program_cnt")
+    draw_retention_rate_3d(program_cnt_comb, collect_channel_cnt_comb, label_list, "program_cnt * program_cnt")
+    """
+
+    # 留存推动效率
     draw_retention_eff(sum_play_day_comb, label_list, "Sum Play Day")
     draw_retention_eff(sum_duration_comb, label_list, "Sum Duration")
     draw_retention_eff(program_cnt_comb, label_list, "Program Count")
@@ -106,7 +117,7 @@ if __name__ == "__main__":
     draw_retention_eff(collect_category_cnt_comb, label_list, "Collect Category Count")
     draw_retention_eff(share_channel_cnt_comb, label_list, "Share Channel Count")
     draw_retention_eff(chat_cnt_comb, label_list, "Chat Count")
-    """
+
 
     # 一阶留存率曲线
     draw_retention_rate_2d(sum_play_day_comb, label_list, "Sum Play Day")

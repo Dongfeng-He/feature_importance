@@ -22,7 +22,8 @@ plt.rcParams['font.sans-serif'] = ['SimHei']
 
 
 def to_percent(temp, position):
-    return '%1.0f' % (100 * temp) + '%'
+    return '%.1f' % (100 * temp) + '%'
+    # return '%1.0f' % (100 * temp) + '%'
 
 
 def draw_line(x, y, y_proportion, name_list, title):
@@ -161,6 +162,7 @@ def draw_retention_eff(feature_comb, label_list, title):
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
     ax1.plot(x, y, label=u'retention_push_efficiency')
+    plt.gca().yaxis.set_major_formatter(FuncFormatter(to_percent))
     plt.xticks(x[::1], name_list[::1], rotation=90)
     ax1.legend(loc=1)
     plt.legend(prop={'family': 'SimHei', 'size': 8}, loc="upper right")

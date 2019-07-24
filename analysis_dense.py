@@ -146,9 +146,12 @@ if __name__ == "__main__":
     dense_feature_comb_6 = [collect_category_cnt, convert_dict(collect_category_cnt_bucket_name)]
     dense_feature_comb_7 = [chat_cnt, convert_dict(chat_cnt_bucket_name)]
     dense_feature_comb_8 = [share_channel_cnt, convert_dict(share_channel_cnt_bucket_name)]
+    """
     dense_feature_comb_list = [dense_feature_comb_0, dense_feature_comb_1, dense_feature_comb_2, dense_feature_comb_3,
                                dense_feature_comb_4, dense_feature_comb_5, dense_feature_comb_6, dense_feature_comb_7,
                                dense_feature_comb_8]
+    """
+    dense_feature_comb_list = [dense_feature_comb_0, dense_feature_comb_1, dense_feature_comb_2, dense_feature_comb_5, dense_feature_comb_6]
     if False:
         # 特征交叉, 二阶
         feature_cate_num = len(feature_comb_list)
