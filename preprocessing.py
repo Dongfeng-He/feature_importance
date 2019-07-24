@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import math
 from scipy.sparse import csr_matrix
-
+import re
 
 
 def chi_square_bucketing(feature_list, label_list, confidence_val=3.841, max_bucket_num=10, sample_num=None):
@@ -394,6 +394,22 @@ if __name__ == "__main__":
     sample_list, overall_bucket_name_dict = feature_concat(feature_comb_list)
 
 
+def convert_dict(feature_name_dict):
+    name = feature_name_dict[0]
+    s = re.findall(r'[[](.*?)[)]', name)
+    for v in s:
+        name = name.replace(v, "")
+    name = name.replace("[)", "").replace(" ", ", ")
+    new_dict = {0: name}
+    return new_dict
 
+
+def eng2chi(name):
+    name = name.replace("sum_play_day", "收听总天数").replace("sum_duration", "收听总时长")\
+        .replace("collect_channel_cnt", "收藏专辑数").replace("program_cnt", "收听节目数")\
+        .replace("collect_category_cnt", "收藏分类数").replace("chan_cnt", "收听专辑数")\
+        .replace("category_cnt", "收听分类数").replace("share_channel_cnt", "分享数")\
+        .replace("chat_cnt", "评论数")
+    return name
 
 

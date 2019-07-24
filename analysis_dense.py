@@ -9,17 +9,6 @@ from sklearn.metrics import precision_recall_fscore_support, roc_auc_score
 import os
 import time
 import itertools
-import re
-
-
-def convert_dict(feature_name_dict):
-    name = feature_name_dict[0]
-    s = re.findall(r'[[](.*?)[)]', name)
-    for v in s:
-        name = name.replace(v, "")
-    name = name.replace("[)", "").replace(" ", ", ")
-    new_dict = {0: name}
-    return new_dict
 
 
 if __name__ == "__main__":
@@ -52,7 +41,48 @@ if __name__ == "__main__":
     last_counter = collections.Counter(last_flag)
     chat_cnt_counter = collections.Counter(chat_cnt)
     share_channel_cnt_counter = collections.Counter(share_channel_cnt)
+    program_cnt_counter = collections.Counter(program_cnt)
+    chan_cnt_counter = collections.Counter(chan_cnt)
+    sum_duration_counter = collections.Counter(sum_duration)
     label_list = last_flag
+
+    # 数据清理
+    clean_data = True
+    if clean_data:
+        # 删除收听总时长1分钟以内，收听节目数1个以下，收听天数1天以下的用户
+        sample_pairs = list(zip(label_list, program_cnt, chan_cnt, category_cnt, sum_duration, sum_play_day, collect_channel_cnt, collect_category_cnt, chat_cnt, share_channel_cnt))
+        sample_pairs = list(filter(lambda x: x[1] > 1 and x[2] > 1 and x[4] > 60 and x[5] > 1, sample_pairs))
+        label_list = list(map(lambda x: x[0], sample_pairs))
+        program_cnt = list(map(lambda x: x[1], sample_pairs))
+        chan_cnt = list(map(lambda x: x[2], sample_pairs))
+        category_cnt = list(map(lambda x: x[3], sample_pairs))
+        sum_duration = list(map(lambda x: x[4], sample_pairs))
+        sum_play_day = list(map(lambda x: x[5], sample_pairs))
+        collect_channel_cnt = list(map(lambda x: x[6], sample_pairs))
+        collect_category_cnt = list(map(lambda x: x[7], sample_pairs))
+        chat_cnt = list(map(lambda x: x[8], sample_pairs))
+        share_channel_cnt = list(map(lambda x: x[9], sample_pairs))
+
+    # 样本均衡
+    sample_balance = True
+    if sample_balance:
+        sample_pairs = list(zip(label_list, program_cnt, chan_cnt, category_cnt, sum_duration, sum_play_day, collect_channel_cnt, collect_category_cnt, chat_cnt, share_channel_cnt))
+        positive_pairs = list(filter(lambda x: x[0] == 1, sample_pairs))
+        negative_pairs = list(filter(lambda x: x[0] == 0, sample_pairs))
+        negative_pairs_balanced = random.sample(negative_pairs, len(positive_pairs))
+        sample_pairs = positive_pairs + negative_pairs_balanced
+        random.shuffle(sample_pairs)
+        # sample_pairs = random.sample(sample_pairs, 1000)
+        label_list = list(map(lambda x: x[0], sample_pairs))
+        program_cnt = list(map(lambda x: x[1], sample_pairs))
+        chan_cnt = list(map(lambda x: x[2], sample_pairs))
+        category_cnt = list(map(lambda x: x[3], sample_pairs))
+        sum_duration = list(map(lambda x: x[4], sample_pairs))
+        sum_play_day = list(map(lambda x: x[5], sample_pairs))
+        collect_channel_cnt = list(map(lambda x: x[6], sample_pairs))
+        collect_category_cnt = list(map(lambda x: x[7], sample_pairs))
+        chat_cnt = list(map(lambda x: x[8], sample_pairs))
+        share_channel_cnt = list(map(lambda x: x[9], sample_pairs))
 
     # 分桶
     # bucket_list = even_num_bucketing(feature_list=list(filter(lambda x: x!=0, program_cnt)), bucket_num=20)
@@ -146,15 +176,6 @@ if __name__ == "__main__":
     sample_num = int(len(sample_list) * sample_rate)
     sample_list = sample_list[: sample_num]
     label_list = label_list[: sample_num]
-    # 样本均衡
-    if sample_balance:
-        sample_pairs = list(zip(sample_list, label_list))
-        positive_pairs = list(filter(lambda x: x[1] == 1, sample_pairs))
-        negative_pairs = list(filter(lambda x: x[1] == 0, sample_pairs))
-        negative_pairs_balanced = random.sample(negative_pairs, len(positive_pairs))
-        sample_pairs = positive_pairs + negative_pairs_balanced
-        sample_list = list(map(lambda x: x[0], sample_pairs))
-        label_list = list(map(lambda x: x[1], sample_pairs))
     train_num = int(len(sample_list) * split_rate)
     random.seed(1)
     random.shuffle(sample_list)
@@ -203,5 +224,5 @@ if __name__ == "__main__":
     sorted_feature_importance = sorted(feature_importance_pairs, key=lambda x: x[1], reverse=True)
     # 打印特征重要性
     for i in range(len(sorted_feature_importance)):
-        print("%d\t%s\t%f" % (i + 1, sorted_feature_importance[i][0], sorted_feature_importance[i][1]))
+        print("%d\t%s\t%f" % (i + 1, eng2chi(sorted_feature_importance[i][0]), sorted_feature_importance[i][1]))
 
